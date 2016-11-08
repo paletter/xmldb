@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xmldb> 
+  <datas> 
+    <data> 
+      <id>001</id>  
+      <name>Angle</name>  
+      <age>1</age> 
+    </data>  
+    <data> 
+      <id>002</id>  
+      <name>Tom</name>  
+      <age>18</age> 
+    </data>  
+  </datas> 
+</xmldb>
