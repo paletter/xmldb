@@ -38,20 +38,20 @@ public class QueryDao {
 		return queryParamVoList;
 	}
 	
-	public static <T> List<T> queryByKey(String xmlName, T obj, Class<T> entityClazz) {
+	public static <T> T queryByKey(String xmlName, T obj, Class<T> entityClazz) {
 
 		if(obj == null) {
-			return queryAll(xmlName, entityClazz);
+			return null;
 		}
 		
-		List<T> resultList = new ArrayList<T>();
+		T result = null;
 		
 		try {
 			
 			List<QueryParamVo> queryParamVoList = transferClazzToParam(obj);
 			
 			if(queryParamVoList.size() == 0) {
-				return queryAll(xmlName, entityClazz);
+				return null;
 			}
 			
 			if(queryParamVoList.size() > 0) {
@@ -60,7 +60,7 @@ public class QueryDao {
 				File xml = new File(XmlDBContext.getXmlPath() + xmlName);
 				
 				if(!xml.isFile()) {
-					return resultList;
+					return null;
 				}
 				
 				List<Element> dataList = XmlDBUtil.getDataElementList(xml);
@@ -68,7 +68,7 @@ public class QueryDao {
 					
 					if(XmlDBUtil.isQueryParamMatch(data, queryParamVoList)) {
 	
-						T result = entityClazz.newInstance();
+						result = entityClazz.newInstance();
 						
 						for(Iterator<?> iterator = data.elementIterator(); iterator.hasNext(); ) {
 							Element column = (Element) iterator.next();
@@ -87,17 +87,15 @@ public class QueryDao {
 								}
 							}
 						}
-						
-						resultList.add(result);
 					}
 				}
 			}
 			
-			return resultList;
+			return result;
 		
 		} catch (Exception e) {
 			e.printStackTrace();
-			return resultList;
+			return result;
 		}
 	}
 	

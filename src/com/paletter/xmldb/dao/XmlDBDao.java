@@ -16,6 +16,11 @@ public class XmlDBDao {
 		return QueryDao.query(xmlName, obj, entityClazz);
 	}
 	
+	public static <T> T queryByKey(String xmlName, T obj, Class<T> entityClazz) {
+		xmlName = XmlDBUtil.formatXmlName(xmlName);
+		return QueryDao.queryByKey(xmlName, obj, entityClazz);
+	}
+	
 	public static <T> Integer update(String xmlName, T obj) {
 		xmlName = XmlDBUtil.formatXmlName(xmlName);
 		return UpdateDao.update(xmlName, obj);
@@ -28,12 +33,18 @@ public class XmlDBDao {
 	
 	public static <T> Integer save(String xmlName, T obj, Class<T> entityClazz) {
 		xmlName = XmlDBUtil.formatXmlName(xmlName);
-		List<T> queryList = query(xmlName, obj, entityClazz);
+		T queryResult = queryByKey(xmlName, obj, entityClazz);
+		
 		Integer result = 0;
-		if(queryList.size() == 0) {
+		
+		if(queryResult == null) {
 			result = insert(xmlName, obj);
 		}
 		
-		return InsertDao.insert(xmlName, obj);
+		if(queryResult != null) {
+			result = update(xmlName, obj);
+		}
+		
+		return result;
 	}
 }
