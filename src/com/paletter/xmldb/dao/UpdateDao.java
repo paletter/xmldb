@@ -12,7 +12,8 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.paletter.xmldb.context.XmlDBContext;
-import com.paletter.xmldb.util.CommonUtil;
+import com.paletter.xmldb.generator.XmlGenerator;
+import com.paletter.xmldb.util.XmlDBUtil;
 import com.paletter.xmldb.vo.QueryParamVo;
 
 public class UpdateDao {
@@ -31,7 +32,7 @@ public class UpdateDao {
 			for(Field pro : properties) {
 				String proName = pro.getName();
 				
-				Method method = clazz.getMethod("get" + CommonUtil.upperFirst(proName));
+				Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(proName));
 				Object valueObj = method.invoke(obj);
 				if(valueObj != null) {
 					QueryParamVo queryParamVo = new QueryParamVo();
@@ -41,9 +42,14 @@ public class UpdateDao {
 				}
 			}
 			
-			SAXReader reader = new SAXReader();
-			xmlName = CommonUtil.formatXmlName(xmlName);
+			xmlName = XmlDBUtil.formatXmlName(xmlName);
 			File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
+			
+			if(!xml.isFile()) {
+				return 0;
+			}
+			
+			SAXReader reader = new SAXReader();
 	
 			Document doc = reader.read(xml);
 			Element root = doc.getRootElement();
@@ -63,7 +69,7 @@ public class UpdateDao {
 						Field[] fields = clazz.getDeclaredFields();
 						for(Field f : fields) {
 							if(columnName.equals(f.getName())) {
-								Method method = clazz.getMethod("get" + CommonUtil.upperFirst(columnName));
+								Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(columnName));
 								Object valueObj = method.invoke(obj);
 								if(valueObj != null) {
 									column.setText(valueObj.toString());
@@ -76,7 +82,7 @@ public class UpdateDao {
 				}
 			}
 			
-			CommonUtil.outPutXmlFile(XmlDBContext.getXmlFilePath(xmlName), doc);
+			XmlDBUtil.outPutXmlFile(XmlDBContext.getXmlFilePath(xmlName), doc);
 			
 			return result;
 		} catch (Exception e) {

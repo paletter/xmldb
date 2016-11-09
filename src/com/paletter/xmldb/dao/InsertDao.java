@@ -9,7 +9,8 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.paletter.xmldb.context.XmlDBContext;
-import com.paletter.xmldb.util.CommonUtil;
+import com.paletter.xmldb.generator.XmlGenerator;
+import com.paletter.xmldb.util.XmlDBUtil;
 
 public class InsertDao {
 
@@ -19,9 +20,14 @@ public class InsertDao {
 		
 		try {
 			
-			SAXReader reader = new SAXReader();
-			xmlName = CommonUtil.formatXmlName(xmlName);
+			xmlName = XmlDBUtil.formatXmlName(xmlName);
 			File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
+			
+			if(!xml.isFile()) {
+				xml = XmlGenerator.generateXml(xmlName);
+			}
+			
+			SAXReader reader = new SAXReader();
 	
 			Document doc = reader.read(xml);
 			Element root = doc.getRootElement();
@@ -37,7 +43,7 @@ public class InsertDao {
 				
 				Element column = newData.addElement(f.getName());
 				
-				Method method = clazz.getMethod("get" + CommonUtil.upperFirst(f.getName()));
+				Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(f.getName()));
 				Object valueObj = method.invoke(obj);
 				if(valueObj != null) {
 					column.setText(valueObj.toString());
@@ -46,7 +52,7 @@ public class InsertDao {
 				}
 			}
 			
-			CommonUtil.outPutXmlFile(XmlDBContext.getXmlFilePath(xmlName), doc);
+			XmlDBUtil.outPutXmlFile(XmlDBContext.getXmlFilePath(xmlName), doc);
 			
 			return result;
 		} catch (Exception e) {

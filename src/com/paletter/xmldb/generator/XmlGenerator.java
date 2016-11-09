@@ -7,7 +7,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import com.paletter.xmldb.context.XmlDBContext;
-import com.paletter.xmldb.util.CommonUtil;
+import com.paletter.xmldb.util.XmlDBUtil;
 
 public class XmlGenerator {
 
@@ -15,7 +15,7 @@ public class XmlGenerator {
 		
 		try {
 			
-			xmlName = CommonUtil.formatXmlName(xmlName);
+			xmlName = XmlDBUtil.formatXmlName(xmlName);
 			File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
 			
 			Document doc = DocumentHelper.createDocument();
@@ -27,7 +27,7 @@ public class XmlGenerator {
 			Element datas = root.addElement("datas");
 			datas.setText("");
 			
-			CommonUtil.outPutXmlFile(XmlDBContext.getXmlFilePath(xmlName), doc);
+			XmlDBUtil.outPutXmlFile(XmlDBContext.getXmlFilePath(xmlName), doc);
 			
 			return xml;
 		} catch (Exception e) {

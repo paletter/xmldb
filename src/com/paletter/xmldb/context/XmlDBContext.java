@@ -8,6 +8,7 @@ public class XmlDBContext {
 		if(!xmlPath.endsWith("/")) {
 			xmlPath = xmlPath + "/";
 		}
+		
 		XmlDBContext.xmlPath = xmlPath;
 	}
 

@@ -24,11 +24,11 @@ public class TestMain {
 //		user.setId("001");
 //		List<User> userList = BaseDao.query("user.xml", user, User.class);
 		
-//		User us = new User();
-//		us.setId("003");
-//		us.setName("Angle3");
-//		us.setAge(1);
-//		Integer result = XmlDBDao.insert("user.xml", us);
+		User us = new User();
+		us.setId("003");
+		us.setName("Angle3");
+		us.setAge(1);
+		Integer result = XmlDBDao.insert("user.xml", us);
 //		System.out.println(result);
 		
 		List<User> userList = XmlDBDao.queryAll("user.xml", User.class);

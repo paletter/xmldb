@@ -1,13 +1,18 @@
 package com.paletter.xmldb.util;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+
+import javax.xml.XMLConstants;
 
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
-public class CommonUtil {
+import com.paletter.xmldb.context.XmlDBContext;
+
+public class XmlDBUtil {
 
 	public static String formatXmlName(String xmlName) {
 		if(xmlName.indexOf(".xml") <= 0 && xmlName.length() > 0) {
@@ -47,5 +52,10 @@ public class CommonUtil {
 	
 	public static boolean isNotNullOrEmpty(String str) {
 		return str != null && !str.trim().equals("");
+	}
+	
+	public static boolean isXmlExist(String xmlName) {
+		File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
+		return xml.isFile();
 	}
 }

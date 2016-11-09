@@ -12,7 +12,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.paletter.xmldb.context.XmlDBContext;
-import com.paletter.xmldb.util.CommonUtil;
+import com.paletter.xmldb.util.XmlDBUtil;
 import com.paletter.xmldb.vo.QueryParamVo;
 
 public class QueryDao {
@@ -35,7 +35,7 @@ public class QueryDao {
 			for(Field pro : properties) {
 				String proName = pro.getName();
 				
-				Method method = clazz.getMethod("get" + CommonUtil.upperFirst(proName));
+				Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(proName));
 				Object valueObj = method.invoke(obj);
 				if(valueObj != null) {
 					QueryParamVo queryParamVo = new QueryParamVo();
@@ -51,9 +51,14 @@ public class QueryDao {
 			
 			if(queryParamVoList.size() > 0) {
 			
-				SAXReader reader = new SAXReader();
-				xmlName = CommonUtil.formatXmlName(xmlName);
+				xmlName = XmlDBUtil.formatXmlName(xmlName);
 				File xml = new File(XmlDBContext.getXmlPath() + xmlName);
+				
+				if(!xml.isFile()) {
+					return resultList;
+				}
+				
+				SAXReader reader = new SAXReader();
 		
 				Document doc = reader.read(xml);
 				Element root = doc.getRootElement();
@@ -72,10 +77,10 @@ public class QueryDao {
 							
 							String columnName = column.getName();
 							String columnVal = column.getText();
-							if(CommonUtil.isNotNullOrEmpty(columnVal)) {
+							if(XmlDBUtil.isNotNullOrEmpty(columnVal)) {
 								
-								Class<?> propertyTypeClass = CommonUtil.getPropertyTypeClass(entityClazz, column.getName());
-								Method setMethod = entityClazz.getMethod("set" + CommonUtil.upperFirst(columnName), propertyTypeClass);
+								Class<?> propertyTypeClass = XmlDBUtil.getPropertyTypeClass(entityClazz, column.getName());
+								Method setMethod = entityClazz.getMethod("set" + XmlDBUtil.upperFirst(columnName), propertyTypeClass);
 								
 								if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
 									setMethod.invoke(result, Integer.valueOf(columnVal));
@@ -104,9 +109,14 @@ public class QueryDao {
 		
 		try {
 			
-			SAXReader reader = new SAXReader();
-			xmlName = CommonUtil.formatXmlName(xmlName);
+			xmlName = XmlDBUtil.formatXmlName(xmlName);
 			File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
+			
+			if(!xml.isFile()) {
+				return resultList;
+			}
+			
+			SAXReader reader = new SAXReader();
 	
 			Document doc = reader.read(xml);
 			Element root = doc.getRootElement();
@@ -123,10 +133,10 @@ public class QueryDao {
 					
 					String columnName = column.getName();
 					String columnVal = column.getText();
-					if(CommonUtil.isNotNullOrEmpty(columnVal)) {
+					if(XmlDBUtil.isNotNullOrEmpty(columnVal)) {
 						
-						Class<?> propertyTypeClass = CommonUtil.getPropertyTypeClass(entityClazz, column.getName());
-						Method setMethod = entityClazz.getMethod("set" + CommonUtil.upperFirst(columnName), propertyTypeClass);
+						Class<?> propertyTypeClass = XmlDBUtil.getPropertyTypeClass(entityClazz, column.getName());
+						Method setMethod = entityClazz.getMethod("set" + XmlDBUtil.upperFirst(columnName), propertyTypeClass);
 						
 						if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
 							setMethod.invoke(result, Integer.valueOf(columnVal));
