@@ -55,11 +55,11 @@ public class UpdateDao {
 			
 			Element datas = root.element("datas");
 			List<Element> dataList = datas.elements("data");
-			String key = getKey(root);
+			String key = XmlDBUtil.getKey(root);
 			
 			for(Element data : dataList) {
 				
-				if(isKeyMatch(data, key, queryParamVoList)) {
+				if(XmlDBUtil.isKeyMatch(data, key, queryParamVoList)) {
 
 					for(Iterator<?> iterator = data.elementIterator(); iterator.hasNext(); ) {
 						Element column = (Element) iterator.next();
@@ -91,46 +91,4 @@ public class UpdateDao {
 		}
 	}
 	
-	public static String getKey(Element root) throws Exception {
-		
-		try {
-			
-			Element property = root.element("property");
-			Element key = property.element("key");
-			if(XmlDBUtil.isNullOrEmpty(key.getText())) {
-				throw new Exception();
-			}
-			
-			return key.getText();
-		} catch (Exception e) {
-			throw new Exception("Get key fail for update xml!");
-		}
-	}
-	
-	public static boolean isKeyMatch(Element e, String key, List<QueryParamVo> queryParamVoList) {
-		
-		String keyValue = null;
-		for(QueryParamVo queryParamVo : queryParamVoList) {
-			if(queryParamVo.getName().equals(key)) {
-				keyValue = queryParamVo.getValue();
-			}
-		}
-		
-		if(keyValue == null) {
-			return false;
-		}
-		
-		for(Iterator<?> iterator = e.elementIterator(); iterator.hasNext(); ) {
-			Element column = (Element) iterator.next();
-			
-			String columnName = column.getName();
-			String columnVal = column.getText();
-			
-			if(columnName.equals(key) && columnVal.equals(keyValue)) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
 }

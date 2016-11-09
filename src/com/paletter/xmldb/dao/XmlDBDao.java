@@ -25,4 +25,15 @@ public class XmlDBDao {
 		xmlName = XmlDBUtil.formatXmlName(xmlName);
 		return InsertDao.insert(xmlName, obj);
 	}
+	
+	public static <T> Integer save(String xmlName, T obj, Class<T> entityClazz) {
+		xmlName = XmlDBUtil.formatXmlName(xmlName);
+		List<T> queryList = query(xmlName, obj, entityClazz);
+		Integer result = 0;
+		if(queryList.size() == 0) {
+			result = insert(xmlName, obj);
+		}
+		
+		return InsertDao.insert(xmlName, obj);
+	}
 }
