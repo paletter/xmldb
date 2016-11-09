@@ -54,7 +54,7 @@ public class XmlDBUtil {
 		return str != null && !str.trim().equals("");
 	}
 	
-	public static boolean isXmlExist(String xmlName) {
+	public static boolean isXmlExist(String xmlName) throws Exception {
 		File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
 		return xml.isFile();
 	}

@@ -1,5 +1,7 @@
 package com.paletter.xmldb.context;
 
+import com.paletter.xmldb.util.XmlDBUtil;
+
 public class XmlDBContext {
 
 	private static String xmlPath;
@@ -16,7 +18,10 @@ public class XmlDBContext {
 		return xmlPath;
 	}
 	
-	public static String getXmlFilePath(String xmlName) {
+	public static String getXmlFilePath(String xmlName) throws Exception {
+		if(XmlDBUtil.isNullOrEmpty(xmlPath)) {
+			throw new Exception("Base xmlPath is empty or null");
+		}
 		return xmlPath + xmlName;
 	}
 }
