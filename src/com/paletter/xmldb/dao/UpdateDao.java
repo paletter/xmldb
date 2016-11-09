@@ -42,6 +42,7 @@ public class UpdateDao {
 			}
 			
 			SAXReader reader = new SAXReader();
+			xmlName = CommonUtil.formatXmlName(xmlName);
 			File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
 	
 			Document doc = reader.read(xml);

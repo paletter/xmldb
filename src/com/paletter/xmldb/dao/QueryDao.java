@@ -17,54 +17,6 @@ import com.paletter.xmldb.vo.QueryParamVo;
 
 public class QueryDao {
 
-	public static <T> List<T> queryAll(String xmlName, Class<T> entityClazz) {
-
-		List<T> resultList = new ArrayList<T>();
-		
-		try {
-			
-			SAXReader reader = new SAXReader();
-			File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
-	
-			Document doc = reader.read(xml);
-			Element root = doc.getRootElement();
-			
-			Element datas = root.element("datas");
-			List<Element> dataList = datas.elements("data");
-			
-			for(Element data : dataList) {
-				
-				T result = entityClazz.newInstance();
-				
-				for(Iterator<?> iterator = data.elementIterator(); iterator.hasNext(); ) {
-					Element column = (Element) iterator.next();
-					
-					String columnName = column.getName();
-					String columnVal = column.getText();
-					if(CommonUtil.isNotNullOrEmpty(columnVal)) {
-						
-						Class<?> propertyTypeClass = CommonUtil.getPropertyTypeClass(entityClazz, column.getName());
-						Method setMethod = entityClazz.getMethod("set" + CommonUtil.upperFirst(columnName), propertyTypeClass);
-						
-						if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
-							setMethod.invoke(result, Integer.valueOf(columnVal));
-						} else {
-							setMethod.invoke(result, columnVal);
-						}
-					}
-				}
-				
-				resultList.add(result);
-			}
-			
-			return resultList;
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-			return resultList;
-		}
-	}
-
 	public static <T> List<T> query(String xmlName, T obj, Class<T> entityClazz) {
 
 		if(obj == null) {
@@ -100,6 +52,7 @@ public class QueryDao {
 			if(queryParamVoList.size() > 0) {
 			
 				SAXReader reader = new SAXReader();
+				xmlName = CommonUtil.formatXmlName(xmlName);
 				File xml = new File(XmlDBContext.getXmlPath() + xmlName);
 		
 				Document doc = reader.read(xml);
@@ -135,6 +88,55 @@ public class QueryDao {
 						resultList.add(result);
 					}
 				}
+			}
+			
+			return resultList;
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			return resultList;
+		}
+	}
+
+	public static <T> List<T> queryAll(String xmlName, Class<T> entityClazz) {
+
+		List<T> resultList = new ArrayList<T>();
+		
+		try {
+			
+			SAXReader reader = new SAXReader();
+			xmlName = CommonUtil.formatXmlName(xmlName);
+			File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
+	
+			Document doc = reader.read(xml);
+			Element root = doc.getRootElement();
+			
+			Element datas = root.element("datas");
+			List<Element> dataList = datas.elements("data");
+			
+			for(Element data : dataList) {
+				
+				T result = entityClazz.newInstance();
+				
+				for(Iterator<?> iterator = data.elementIterator(); iterator.hasNext(); ) {
+					Element column = (Element) iterator.next();
+					
+					String columnName = column.getName();
+					String columnVal = column.getText();
+					if(CommonUtil.isNotNullOrEmpty(columnVal)) {
+						
+						Class<?> propertyTypeClass = CommonUtil.getPropertyTypeClass(entityClazz, column.getName());
+						Method setMethod = entityClazz.getMethod("set" + CommonUtil.upperFirst(columnName), propertyTypeClass);
+						
+						if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
+							setMethod.invoke(result, Integer.valueOf(columnVal));
+						} else {
+							setMethod.invoke(result, columnVal);
+						}
+					}
+				}
+				
+				resultList.add(result);
 			}
 			
 			return resultList;

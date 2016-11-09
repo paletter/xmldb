@@ -7,10 +7,15 @@ import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
-import com.paletter.xmldb.context.XmlDBContext;
-
 public class CommonUtil {
 
+	public static String formatXmlName(String xmlName) {
+		if(xmlName.indexOf(".xml") <= 0 && xmlName.length() > 0) {
+			xmlName = xmlName + ".xml";
+		}
+		return xmlName;
+	}
+	
 	public static String upperFirst(String str) {
 		return str.substring(0, 1).toUpperCase() + str.substring(1);
 	}
