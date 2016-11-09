@@ -12,7 +12,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.paletter.xmldb.context.XmlDBContext;
-import com.paletter.xmldb.generator.XmlGenerator;
 import com.paletter.xmldb.util.XmlDBUtil;
 import com.paletter.xmldb.vo.QueryParamVo;
 
@@ -56,10 +55,11 @@ public class UpdateDao {
 			
 			Element datas = root.element("datas");
 			List<Element> dataList = datas.elements("data");
+			String key = getKey(root);
 			
 			for(Element data : dataList) {
 				
-				if(isIdMatch(data, queryParamVoList)) {
+				if(isKeyMatch(data, key, queryParamVoList)) {
 
 					for(Iterator<?> iterator = data.elementIterator(); iterator.hasNext(); ) {
 						Element column = (Element) iterator.next();
@@ -91,16 +91,32 @@ public class UpdateDao {
 		}
 	}
 	
-	public static boolean isIdMatch(Element e, List<QueryParamVo> queryParamVoList) {
+	public static String getKey(Element root) throws Exception {
 		
-		String id = null;
+		try {
+			
+			Element property = root.element("property");
+			Element key = property.element("key");
+			if(XmlDBUtil.isNullOrEmpty(key.getText())) {
+				throw new Exception();
+			}
+			
+			return key.getText();
+		} catch (Exception e) {
+			throw new Exception("Get key fail for update xml!");
+		}
+	}
+	
+	public static boolean isKeyMatch(Element e, String key, List<QueryParamVo> queryParamVoList) {
+		
+		String keyValue = null;
 		for(QueryParamVo queryParamVo : queryParamVoList) {
-			if(queryParamVo.getName().equals("id")) {
-				id = queryParamVo.getValue();
+			if(queryParamVo.getName().equals(key)) {
+				keyValue = queryParamVo.getValue();
 			}
 		}
 		
-		if(id == null) {
+		if(keyValue == null) {
 			return false;
 		}
 		
@@ -110,7 +126,7 @@ public class UpdateDao {
 			String columnName = column.getName();
 			String columnVal = column.getText();
 			
-			if(columnName.equals("id") && columnVal.equals(id)) {
+			if(columnName.equals(key) && columnVal.equals(keyValue)) {
 				return true;
 			}
 		}

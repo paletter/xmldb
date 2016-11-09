@@ -9,7 +9,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.paletter.xmldb.context.XmlDBContext;
-import com.paletter.xmldb.generator.XmlGenerator;
 import com.paletter.xmldb.util.XmlDBUtil;
 
 public class InsertDao {
@@ -22,10 +21,6 @@ public class InsertDao {
 			
 			xmlName = XmlDBUtil.formatXmlName(xmlName);
 			File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
-			
-			if(!xml.isFile()) {
-				xml = XmlGenerator.generateXml(xmlName);
-			}
 			
 			SAXReader reader = new SAXReader();
 	

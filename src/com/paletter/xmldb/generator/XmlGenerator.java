@@ -11,7 +11,15 @@ import com.paletter.xmldb.util.XmlDBUtil;
 
 public class XmlGenerator {
 
-	public static File generateXml(String xmlName) {
+	public static File generateXml(String xmlName, String keyName) throws Exception {
+		
+		if(XmlDBUtil.isNullOrEmpty(xmlName)) {
+			throw new Exception("Param xmlName can't be null");
+		}
+		
+		if(XmlDBUtil.isNullOrEmpty(keyName)) {
+			throw new Exception("Param keyName can't be null");
+		}
 		
 		try {
 			
@@ -22,7 +30,8 @@ public class XmlGenerator {
 			Element root = doc.addElement("xmldb");
 			
 			Element property = root.addElement("property");
-			property.setText("");
+			Element key = property.addElement("key");
+			key.setText(keyName);
 			
 			Element datas = root.addElement("datas");
 			datas.setText("");
