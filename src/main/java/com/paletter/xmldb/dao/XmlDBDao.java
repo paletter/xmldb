@@ -21,6 +21,11 @@ public class XmlDBDao {
 		return QueryDao.queryByKey(xmlName, obj, entityClazz);
 	}
 	
+	public static <T> T queryByKey(String xmlName, String keyValue, Class<T> entityClazz) {
+		xmlName = XmlDBUtil.formatXmlName(xmlName);
+		return QueryDao.queryByKey(xmlName, keyValue, entityClazz);
+	}
+	
 	public static <T> Integer update(String xmlName, T obj) {
 		xmlName = XmlDBUtil.formatXmlName(xmlName);
 		return UpdateDao.update(xmlName, obj);
@@ -46,5 +51,10 @@ public class XmlDBDao {
 		}
 		
 		return result;
+	}
+	
+	public static Integer delete(String xmlName, String keyValue) {
+		xmlName = XmlDBUtil.formatXmlName(xmlName);
+		return DeleteDao.delete(xmlName, keyValue);
 	}
 }

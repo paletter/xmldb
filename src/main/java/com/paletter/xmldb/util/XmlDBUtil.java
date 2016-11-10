@@ -96,10 +96,10 @@ public class XmlDBUtil {
 		}
 	}
 	
-	public static boolean isKeyMatch(Element e, String key, List<QueryParamVo> queryParamVoList) {
+	public static boolean isKeyMatch(Element e, String keyName, List<QueryParamVo> queryParamVoList) {
 		String keyValue = null;
 		for(QueryParamVo queryParamVo : queryParamVoList) {
-			if(queryParamVo.getName().equals(key)) {
+			if(queryParamVo.getName().equals(keyName)) {
 				keyValue = queryParamVo.getValue();
 			}
 		}
@@ -114,7 +114,26 @@ public class XmlDBUtil {
 			String columnName = column.getName();
 			String columnVal = column.getText();
 			
-			if(columnName.equals(key) && columnVal.equals(keyValue)) {
+			if(columnName.equals(keyName) && columnVal.equals(keyValue)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public static boolean isKeyMatch(Element e, String keyName, String keyValue) {
+		if(keyValue == null) {
+			return false;
+		}
+		
+		for(Iterator<?> iterator = e.elementIterator(); iterator.hasNext(); ) {
+			Element column = (Element) iterator.next();
+			
+			String columnName = column.getName();
+			String columnVal = column.getText();
+			
+			if(columnName.equals(keyName) && columnVal.equals(keyValue)) {
 				return true;
 			}
 		}

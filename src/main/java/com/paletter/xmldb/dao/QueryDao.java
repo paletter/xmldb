@@ -26,14 +26,17 @@ public class QueryDao {
 		Field[] properties = clazz.getDeclaredFields();
 		for(Field pro : properties) {
 			String proName = pro.getName();
-			
-			Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(proName));
-			Object valueObj = method.invoke(obj);
-			if(valueObj != null) {
-				QueryParamVo queryParamVo = new QueryParamVo();
-				queryParamVo.setName(proName);
-				queryParamVo.setValue(valueObj.toString());
-				queryParamVoList.add(queryParamVo);
+			try {
+				Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(proName));
+				Object valueObj = method.invoke(obj);
+				if(valueObj != null) {
+					QueryParamVo queryParamVo = new QueryParamVo();
+					queryParamVo.setName(proName);
+					queryParamVo.setValue(valueObj.toString());
+					queryParamVoList.add(queryParamVo);
+				}
+			} catch (Exception e) {
+				
 			}
 		}
 		
@@ -72,11 +75,11 @@ public class QueryDao {
 				
 				Element datas = root.element("datas");
 				List<Element> dataList = datas.elements("data");
-				String key = XmlDBUtil.getKey(root);
+				String keyName = XmlDBUtil.getKey(root);
 				
 				for(Element data : dataList) {
 					
-					if(XmlDBUtil.isKeyMatch(data, key, queryParamVoList)) {
+					if(XmlDBUtil.isKeyMatch(data, keyName, queryParamVoList)) {
 	
 						result = entityClazz.newInstance();
 						
@@ -88,12 +91,18 @@ public class QueryDao {
 							if(XmlDBUtil.isNotNullOrEmpty(columnVal)) {
 								
 								Class<?> propertyTypeClass = XmlDBUtil.getPropertyTypeClass(entityClazz, column.getName());
-								Method setMethod = entityClazz.getMethod("set" + XmlDBUtil.upperFirst(columnName), propertyTypeClass);
-								
-								if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
-									setMethod.invoke(result, Integer.valueOf(columnVal));
-								} else {
-									setMethod.invoke(result, columnVal);
+								try {
+									Method setMethod = entityClazz.getMethod("set" + XmlDBUtil.upperFirst(columnName), propertyTypeClass);
+									
+									if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
+										setMethod.invoke(result, Integer.valueOf(columnVal));
+									} else if(propertyTypeClass.getName().equals("double") || propertyTypeClass.getName().equals(Double.class.getName())) {
+										setMethod.invoke(result, Double.valueOf(columnVal));
+									} else {
+										setMethod.invoke(result, columnVal);
+									}
+								} catch (Exception e) {
+									
 								}
 							}
 						}
@@ -103,6 +112,66 @@ public class QueryDao {
 			
 			return result;
 		
+		} catch (Exception e) {
+			e.printStackTrace();
+			return result;
+		}
+	}
+	
+	public static <T> T queryByKey(String xmlName, String keyValue, Class<T> entityClazz) {
+		
+		if(keyValue == null) {
+			return null;
+		}
+		
+		T result = null;
+		
+		try {
+				
+			xmlName = XmlDBUtil.formatXmlName(xmlName);
+			File xml = new File(XmlDBContext.getXmlPath() + xmlName);
+			
+			if(!xml.isFile()) {
+				return null;
+			}
+			
+			SAXReader reader = new SAXReader();
+			
+			Document doc = reader.read(xml);
+			Element root = doc.getRootElement();
+			
+			Element datas = root.element("datas");
+			List<Element> dataList = datas.elements("data");
+			String keyName = XmlDBUtil.getKey(root);
+			
+			for(Element data : dataList) {
+				
+				if(XmlDBUtil.isKeyMatch(data, keyName, keyValue)) {
+					
+					result = entityClazz.newInstance();
+					
+					for(Iterator<?> iterator = data.elementIterator(); iterator.hasNext(); ) {
+						Element column = (Element) iterator.next();
+						
+						String columnName = column.getName();
+						String columnVal = column.getText();
+						if(XmlDBUtil.isNotNullOrEmpty(columnVal)) {
+							
+							Class<?> propertyTypeClass = XmlDBUtil.getPropertyTypeClass(entityClazz, column.getName());
+							Method setMethod = entityClazz.getMethod("set" + XmlDBUtil.upperFirst(columnName), propertyTypeClass);
+							
+							if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
+								setMethod.invoke(result, Integer.valueOf(columnVal));
+							} else {
+								setMethod.invoke(result, columnVal);
+							}
+						}
+					}
+				}
+			}
+			
+			return result;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return result;
@@ -135,10 +204,10 @@ public class QueryDao {
 				}
 				
 				List<Element> dataList = XmlDBUtil.getDataElementList(xml);
-				String key = XmlDBUtil.getKey(xml);
+				String keyName = XmlDBUtil.getKey(xml);
 				for(Element data : dataList) {
 					
-					if(XmlDBUtil.isKeyMatch(data, key, queryParamVoList)) {
+					if(XmlDBUtil.isKeyMatch(data, keyName, queryParamVoList)) {
 	
 						T result = entityClazz.newInstance();
 						
@@ -150,12 +219,18 @@ public class QueryDao {
 							if(XmlDBUtil.isNotNullOrEmpty(columnVal)) {
 								
 								Class<?> propertyTypeClass = XmlDBUtil.getPropertyTypeClass(entityClazz, column.getName());
-								Method setMethod = entityClazz.getMethod("set" + XmlDBUtil.upperFirst(columnName), propertyTypeClass);
-								
-								if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
-									setMethod.invoke(result, Integer.valueOf(columnVal));
-								} else {
-									setMethod.invoke(result, columnVal);
+								try {
+									Method setMethod = entityClazz.getMethod("set" + XmlDBUtil.upperFirst(columnName), propertyTypeClass);
+									
+									if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
+										setMethod.invoke(result, Integer.valueOf(columnVal));
+									} else if(propertyTypeClass.getName().equals("double") || propertyTypeClass.getName().equals(Double.class.getName())) {
+										setMethod.invoke(result, Double.valueOf(columnVal));
+									} else {
+										setMethod.invoke(result, columnVal);
+									}
+								} catch (Exception e) {
+									
 								}
 							}
 						}
@@ -199,12 +274,18 @@ public class QueryDao {
 					if(XmlDBUtil.isNotNullOrEmpty(columnVal)) {
 						
 						Class<?> propertyTypeClass = XmlDBUtil.getPropertyTypeClass(entityClazz, column.getName());
-						Method setMethod = entityClazz.getMethod("set" + XmlDBUtil.upperFirst(columnName), propertyTypeClass);
-						
-						if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
-							setMethod.invoke(result, Integer.valueOf(columnVal));
-						} else {
-							setMethod.invoke(result, columnVal);
+						try {
+							Method setMethod = entityClazz.getMethod("set" + XmlDBUtil.upperFirst(columnName), propertyTypeClass);
+							
+							if(propertyTypeClass.getName().equals("int") || propertyTypeClass.getName().equals(Integer.class.getName())) {
+								setMethod.invoke(result, Integer.valueOf(columnVal));
+							} else if(propertyTypeClass.getName().equals("double") || propertyTypeClass.getName().equals(Double.class.getName())) {
+								setMethod.invoke(result, Double.valueOf(columnVal));
+							} else {
+								setMethod.invoke(result, columnVal);
+							}
+						} catch (Exception e) {
+							
 						}
 					}
 				}

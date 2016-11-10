@@ -1,11 +1,13 @@
-package com.paletter.xmldb.test;
+package test;
 
 public class User {
 
+	private String xxx;
+	
 	private String id;
 	private String name;
 	private Integer age;
-
+	
 	public String getId() {
 		return id;
 	}

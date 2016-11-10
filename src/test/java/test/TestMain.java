@@ -1,4 +1,4 @@
-package com.paletter.xmldb.test;
+package test;
 
 import java.util.List;
 
@@ -12,19 +12,20 @@ public class TestMain {
 		
 		try {
 			
-			XmlDBContext.init(System.getProperty("user.dir") +  "/src/com/paletter/xmldb/test/");
+			XmlDBContext.init(System.getProperty("user.dir") +  "/src/main/java/com/paletter/xmldb/test/");
 			
 //			XmlGenerator.generateXml("user", "name");
 			
-			User upd = new User();
-			upd.setId("002");
-			upd.setName("Angle1");
-			Integer result = XmlDBDao.update("user.xml", upd);
-			System.out.println(result);
+//			User upd = new User();
+//			upd.setId("003");
+//			upd.setName("Angle2");
+//			upd.setIq("100");
+//			Integer result = XmlDBDao.update("user.xml", upd);
+//			System.out.println(result);
 			
-	//		User user = new User();
-	//		user.setId("001");
-	//		List<User> userList = BaseDao.query("user.xml", user, User.class);
+//			User user = new User();
+//			user.setId("003");
+//			List<User> userList = XmlDBDao.query("user.xml", user, User.class);
 			
 //			User us = new User();
 //			us.setId("001");
@@ -32,6 +33,8 @@ public class TestMain {
 //			us.setAge(1);
 //			Integer result = XmlDBDao.insert("user.xml", us);
 //			System.out.println(result);
+			
+//			System.out.println(XmlDBDao.delete("user.xml", "002"));
 			
 			List<User> userList = XmlDBDao.queryAll("user.xml", User.class);
 			

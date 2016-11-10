@@ -35,15 +35,17 @@ public class InsertDao {
 			Class<? extends Object> clazz = obj.getClass();
 			Field[] fields = clazz.getDeclaredFields();
 			for(Field f : fields) {
-				
-				Element column = newData.addElement(f.getName());
-				
-				Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(f.getName()));
-				Object valueObj = method.invoke(obj);
-				if(valueObj != null) {
-					column.setText(valueObj.toString());
-				} else {
-					column.setText("");
+				try {
+					Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(f.getName()));
+					Object valueObj = method.invoke(obj);
+					Element column = newData.addElement(f.getName());
+					if(valueObj != null) {
+						column.setText(valueObj.toString());
+					} else {
+						column.setText("");
+					}
+				} catch (Exception e) {
+					
 				}
 			}
 			

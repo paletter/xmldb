@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,14 +31,17 @@ public class UpdateDao {
 			Field[] properties = clazz.getDeclaredFields();
 			for(Field pro : properties) {
 				String proName = pro.getName();
-				
-				Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(proName));
-				Object valueObj = method.invoke(obj);
-				if(valueObj != null) {
-					QueryParamVo queryParamVo = new QueryParamVo();
-					queryParamVo.setName(proName);
-					queryParamVo.setValue(valueObj.toString());
-					queryParamVoList.add(queryParamVo);
+				try {
+					Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(proName));
+					Object valueObj = method.invoke(obj);
+					if(valueObj != null) {
+						QueryParamVo queryParamVo = new QueryParamVo();
+						queryParamVo.setName(proName);
+						queryParamVo.setValue(valueObj.toString());
+						queryParamVoList.add(queryParamVo);
+					}
+				} catch (Exception e) {
+					
 				}
 			}
 			
@@ -55,25 +59,52 @@ public class UpdateDao {
 			
 			Element datas = root.element("datas");
 			List<Element> dataList = datas.elements("data");
-			String key = XmlDBUtil.getKey(root);
+			String keyName = XmlDBUtil.getKey(root);
 			
 			for(Element data : dataList) {
 				
-				if(XmlDBUtil.isKeyMatch(data, key, queryParamVoList)) {
+				if(XmlDBUtil.isKeyMatch(data, keyName, queryParamVoList)) {
 
+					Field[] fields = clazz.getDeclaredFields();
+					
+					List<Field> tmpFieldListToRemove = new ArrayList<Field>();
+					Collections.addAll(tmpFieldListToRemove, fields);
+					
 					for(Iterator<?> iterator = data.elementIterator(); iterator.hasNext(); ) {
 						Element column = (Element) iterator.next();
-						
 						String columnName = column.getName();
 						
-						Field[] fields = clazz.getDeclaredFields();
 						for(Field f : fields) {
 							if(columnName.equals(f.getName())) {
-								Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(columnName));
+								
+								tmpFieldListToRemove.remove(f);
+								
+								try {
+									Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(columnName));
+									Object valueObj = method.invoke(obj);
+									if(valueObj != null) {
+										column.setText(valueObj.toString());
+									}
+								} catch (Exception e) {
+									
+								}
+							}
+						}
+					}
+					
+					if(tmpFieldListToRemove.size() > 0) {
+						for(Field f : tmpFieldListToRemove) {
+							try {
+								Method method = clazz.getMethod("get" + XmlDBUtil.upperFirst(f.getName()));
 								Object valueObj = method.invoke(obj);
+								Element column = data.addElement(f.getName());
 								if(valueObj != null) {
 									column.setText(valueObj.toString());
+								} else {
+									column.setText("");
 								}
+							} catch (Exception e) {
+								
 							}
 						}
 					}

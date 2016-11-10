@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xmldb> 
+  <property> 
+    <key>id</key> 
+  </property>  
+  <datas> 
+    <data> 
+      <id>003</id>  
+      <name>Angle2</name>  
+      <age>1</age>  
+      <iq>100</iq>
+    </data> 
+  </datas> 
+</xmldb>
