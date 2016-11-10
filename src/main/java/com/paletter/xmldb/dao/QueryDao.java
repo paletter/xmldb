@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.dom4j.Document;
 import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 
 import com.paletter.xmldb.context.XmlDBContext;
 import com.paletter.xmldb.util.XmlDBUtil;
@@ -63,10 +65,18 @@ public class QueryDao {
 					return null;
 				}
 				
-				List<Element> dataList = XmlDBUtil.getDataElementList(xml);
+				SAXReader reader = new SAXReader();
+		
+				Document doc = reader.read(xml);
+				Element root = doc.getRootElement();
+				
+				Element datas = root.element("datas");
+				List<Element> dataList = datas.elements("data");
+				String key = XmlDBUtil.getKey(root);
+				
 				for(Element data : dataList) {
 					
-					if(XmlDBUtil.isQueryParamMatch(data, queryParamVoList)) {
+					if(XmlDBUtil.isKeyMatch(data, key, queryParamVoList)) {
 	
 						result = entityClazz.newInstance();
 						
