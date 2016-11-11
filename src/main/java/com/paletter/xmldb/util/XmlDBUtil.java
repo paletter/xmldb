@@ -42,7 +42,7 @@ public class XmlDBUtil {
 		OutputFormat format = OutputFormat.createPrettyPrint();
 		format.setNewlines(true);
 		
-		PrintWriter pw = new PrintWriter(filePath);
+		PrintWriter pw = new PrintWriter(filePath, "UTF-8");
 		XMLWriter xw = new XMLWriter(pw, format);
 		xw.write(doc);
 		xw.flush();

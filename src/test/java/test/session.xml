@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xmldb> 
+  <property> 
+    <key>session</key> 
+  </property>  
+  <datas> 
+    <data>
+      <session>shop_spd_ticket-shop-rls</session>
+      <serverHost></serverHost>
+      <rootPath></rootPath>
+      <project></project>
+      <targetPath></targetPath>
+      <uploadPath></uploadPath>
+      <keyPath>D:/03.WorkFiles/01.个人信息相关/服务器登录私钥</keyPath>
+      <keyUser></keyUser>
+      <keyPwd></keyPwd>
+    </data>
+  </datas> 
+</xmldb>
