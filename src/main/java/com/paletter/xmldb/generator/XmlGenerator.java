@@ -10,7 +10,7 @@ import com.paletter.xmldb.context.XmlDBContext;
 import com.paletter.xmldb.util.XmlDBUtil;
 
 public class XmlGenerator {
-
+	
 	public static File generateXml(String xmlName, String keyName) throws Exception {
 		
 		if(XmlDBUtil.isNullOrEmpty(xmlName)) {
@@ -22,7 +22,12 @@ public class XmlGenerator {
 		}
 		
 		try {
+
+			// Generator File Directory
+			File xmlDir = new File(XmlDBContext.getXmlPath());
+			xmlDir.mkdirs();
 			
+			// Generator File
 			xmlName = XmlDBUtil.formatXmlName(xmlName);
 			File xml = new File(XmlDBContext.getXmlFilePath(xmlName));
 			
